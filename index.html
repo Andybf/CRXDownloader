@@ -8,40 +8,103 @@
         <style>
             * {
                 font-family:Arial, Helvetica, sans-serif;
-                font-size: 12px;
+                margin: 0;
+            }
+            html {
+                height: 100%;
+            }
+            body {
+                height: inherit;
+                background-image: linear-gradient(354deg, #c1c1c1, #FFFFFF);
             }
             form {
-                display: grid;
-                margin: 3rem auto;
                 padding: 1rem;
-                height: 80px;
-                width: 400px;
-                background: #efefef;
-                border-radius: 1rem;
+                row-gap: 1rem;
+                background: #ffffff6e;
+                color: #707070;
+                border-radius: 2rem;
+                height: 32vh;
+                width: 66vw;
+                display: grid;
+                position: absolute;
+                top: calc(50% - 16vh);
+                right: calc(50% - 33vw);
             }
             section {
-                display: grid;
-                padding: 5px;
+                display: flex;
                 justify-content: center;
+                font-size: 11pt;
+                font-weight: bold;
+                align-items: center;
+                flex-direction: column;
+                row-gap: 1rem;
             }
-            input.input-link {
-                width: 280px;
+            span#status-message {
+                height: 30px;
             }
-            textarea {
-                resize: none;
-                cursor: default;
-                height: 250px;
-                width: 400px;
+            input {
+                box-shadow: 0px 1px 6px 0px #4a4a4a;
+                border-radius: 0.5rem;
+            }
+            input[type='text'] {
+                font-size: 11pt;
+                font-weight: bold;
+                border: none;
+                height: 40px;
+                width: 90%;
+                color: #595959;
+                background-color: #ffffffb0;
+            }
+            input[type='submit'] {
+                font-size: 12pt;
+                font-weight: bold;
+                color: #444;
+                background-color: white;
+                padding: 1rem;
+                border: none;
+                border-bottom: solid 0.33rem;
+                cursor: pointer;
+            }
+            input[type='submit']:active {
+                border-bottom: solid 0.175rem;
+            }
+            input[type='submit']:disabled {
+                opacity: 0.25;
+                pointer-events: none;
             }
         </style>
 
         <script>
+            function printMessageToScreen(message) {
+                document.querySelector("#status-message").innerText = message;
+            }
+
+            function checkValidURL(event) {
+                if(document.querySelector("input[name='input-link']").value.length >= 32) {
+                    document.querySelector("input[type='submit']").disabled = false;
+
+                    const extensionUrlarray = document.querySelector("input[name='input-link']").value.split('/');
+                    printMessageToScreen("This appears to be an valid Id, try to download it.");
+                    if (extensionUrlarray.length > 1){
+                        printMessageToScreen('extension: '+extensionUrlarray[extensionUrlarray.length-2].replaceAll('-',' '));
+                    }
+                } else {
+                    document.querySelector("input[type='submit']").disabled = true;
+                    printMessageToScreen("Not a valid Id or URL.");
+                }
+            }
+
             function getCRX() {
-                let baseURL = `https://clients2.google.com/service/update2/crx?response=redirect&prodversion=49.0&acceptformat=crx3&x=id%3D(===)%26installsource%3Dondemand%26uc`;
-                let extensionUrl = document.querySelector("input[name='input-link']").value;
-                let extensionId = extensionUrl.replace("https://chrome.google.com/webstore/detail/salesforce-inspector/","");
-                window.location = baseURL.replace("(===)",extensionId);
-                document.querySelector("textarea").innerText += "If success, the extension will be downloaded right now.\n";
+                try {
+                    const extensionUrlarray = document.querySelector("input[name='input-link']").value.split('/');
+                    const extensionId = extensionUrlarray.pop();
+                    let baseURL = `https://clients2.google.com/service/update2/crx?response=redirect&prodversion=49.0&acceptformat=crx3&x=id%3D${extensionId}%26installsource%3Dondemand%26uc`;
+                    window.location = baseURL;
+                    printMessageToScreen("If success, the extension will be downloaded right now.");
+                } catch (ex) {
+                    printMessageToScreen("[ERROR] "+ex);
+                    console.error(ex);
+                }                
             }
         </script>
 
@@ -50,21 +113,16 @@
     <body>
         <form class="content-box" action="javascript:getCRX();">
             <section>
-                <label for="input-link">Please, copy the Chrome Store URL or the extension ID</label>
-                <input type="text" name="input-link" class="input-link"/>
+                <label for="input-link">Please, paste bellow the Chrome Store URL or the extension ID:</label>
+                <input type="text" name="input-link" class="input-link" onkeyup="checkValidURL(event)"/>
+                <span id="status-message"></span>
             </section>
             <section>
-                <input type="submit" class="input-button" value="Download"/>
+                <input type="submit" value="Download" disabled/>
+            </section>
+            <section>
+                Anderson Bucchianico - 2022, licensed under GPLv3.
             </section>
         </form>
-
-        <section class="content-box">
-            <label>Console</label>
-            <textarea readonly></textarea>
-        </section>
-
-        <section>
-            Copyright 2021, Anderson Bucchianico, All rights reserverd.
-        </section>
     </body>
 </html>
