@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <style>
+            * {
+                font-family:Arial, Helvetica, sans-serif;
+                font-size: 12px;
+            }
+            form {
+                display: grid;
+                margin: 3rem auto;
+                padding: 1rem;
+                height: 80px;
+                width: 400px;
+                background: #efefef;
+                border-radius: 1rem;
+            }
+            section {
+                display: grid;
+                padding: 5px;
+                justify-content: center;
+            }
+            input.input-link {
+                width: 280px;
+            }
+            textarea {
+                resize: none;
+                cursor: default;
+                height: 250px;
+                width: 400px;
+            }
+        </style>
+
+        <script>
+            function getCRX() {
+                let baseURL = `https://clients2.google.com/service/update2/crx?response=redirect&prodversion=49.0&acceptformat=crx3&x=id%3D(===)%26installsource%3Dondemand%26uc`;
+                let extensionUrl = document.querySelector("input[name='input-link']").value;
+                let extensionId = extensionUrl.replace("https://chrome.google.com/webstore/detail/salesforce-inspector/","");
+                window.location = baseURL.replace("(===)",extensionId);
+                document.querySelector("textarea").innerText += "If success, the extension will be downloaded right now.\n";
+            }
+        </script>
+
+        <title>CRXDownloader</title>
+    </head>
+    <body>
+        <form class="content-box" action="javascript:getCRX();">
+            <section>
+                <label for="input-link">Please, copy the Chrome Store URL or the extension ID</label>
+                <input type="text" name="input-link" class="input-link"/>
+            </section>
+            <section>
+                <input type="submit" class="input-button" value="Download"/>
+            </section>
+        </form>
+
+        <section class="content-box">
+            <label>Console</label>
+            <textarea readonly></textarea>
+        </section>
+
+        <section>
+            Copyright 2021, Anderson Bucchianico, All rights reserverd.
+        </section>
+    </body>
+</html>
